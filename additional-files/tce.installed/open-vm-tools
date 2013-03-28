@@ -1,0 +1,20 @@
+#!/bin/sh
+
+#
+# TinyCoreLinux will start this script after installing the extension
+#
+echo "`date` Executing '$0'" > /var/log/open-vm-tools.tce.installed.log
+
+#
+# vmtoolsd wants to read this file
+# -> create it
+if [ ! -e /etc/release ]; then
+  echo "TinyCore 4.7.5" > /etc/release
+fi
+
+#
+# copy default etc files to root
+#
+cp -rn --dereference /usr/local/etc/vmware-tools /etc/
+/usr/local/etc/init.d/open-vm-tools start
+
