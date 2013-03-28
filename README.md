@@ -7,23 +7,22 @@ The fast track building instructions
 ------------------------------------
 1. Boot a system with tcl4
 2. Install build depencies mentions below from tcl repository
-```sh
+```
     tce-load -iw git <build-deps>
 ```
 3. Clone the git repository into a tinycore bootet machine and change into the directory 
-```sh
+```
     git clone git://github.com/lapawa/tc4-open-vm-tools.git &&
     cd tc4-open-vm-tools
 ```
 2. Download source tarball from http://sourceforge.net/projects/open-vm-tools/files/open-vm-tools/stable-9.2.x/
+    wget <some really ugly souceforge direct link> 
 3. Change user to root.
-```sh
+```
     sudo -s
 ```
 4. Start build script
-```sh
     ./build-and-install.sh
-```
 5. Good luck
 6. The build script will spit out two tinycore extensions:
    open-vm-tools.tcz
@@ -50,10 +49,11 @@ Build dependencies
  - compiletc          # this meta package pulls in a lot of necessary development tools
  - linux-headers-3.0.21-tinycore # /usr/include/asm header files
  - eglibc_apps        # /usr/bin/rpcgen is in this packet
+ - squashfs-tools-4.x # Tools to build the .tcz file
  - glib2-dev          # 
  - Xorg-7.6-dev
  - gtk2-dev           # because of a missing parameter in lib/appUtil/Makefile.am file it is not possible to compile with X and without gtk2 
- - gtkmm-dev  
+ - gtkmm-dev  o
  - fuse
 
 

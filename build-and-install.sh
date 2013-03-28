@@ -79,7 +79,7 @@ export LDFLAGS="-Wl,-O1"
 ./configure --with-x --without-pam --without-gtkmm --without-procps --without-dnet --without-icu 
 make
 mkdir $INSTDIR
-make DESTDIR=$INSTDIR install
+make DESTDIR=$INSTDIR install-strip
 cd ..
 
 
@@ -118,7 +118,7 @@ rm -r $INSTDIR/sbin
 # add additional tinycore specific file to installation directory
 #rsync -rlpv --executability "$ADDITIONAL/" $INSTDIR/usr/local
 #tar -xf $ADDITIONAL -C $INSTDIR/usr/local
-cp -ra $ADDITIONAL $INSTDIR/usr/local
+cp -ra $ADDITIONAL/* $INSTDIR/usr/local/
 
 #cp $INIT $INSTDIR/usr/local/etc/init.d/open-vm-tools
 chmod +x $INSTDIR/usr/local/etc/init.d/open-vm-tools
@@ -126,19 +126,34 @@ chmod +x $INSTDIR/usr/local/etc/init.d/open-vm-tools
 chmod +s $INSTDIR/usr/local/bin/vmware-user-suid-wrapper
 
 
-# create tinycore extension 'open-vm-tools' with md5sum file
+##
+## create tinycore extension 'open-vm-tools' with md5sum file
+##
 mksquashfs $INSTDIR $TCZ -noappend 
 md5sum $TCZ > $TCZ.md5.txt
+
+
+##
+## create list files
+##
+WD=`pwd`
+cd "$INSTDIR"
+find usr -not -type d > "$WD/$TCZ.list"
+cd "$INSDIR_MODULES"
+find usr -not -type d > "$WD/$TCZ_MODULES.list"
+cd "$WD"
+
 
 ##
 ## copy extension to persistance datastore if exists
 ##
-APPBROWSER=`cat /opt/.appbrowser`
-if [ -d "$APPBROWSER" ]; then
-  cp "$TCZ" "$APPBROWSER/"
-  cp "$TCZ_MODULES" "$APPBROWSER/"
+if [ -r /opt/.appbrowser ]; then
+  APPBROWSER=`cat /opt/.appbrowser`
+  if [ -d "$APPBROWSER" ]; then
+    cp "$TCZ" "$APPBROWSER/"
+    cp "$TCZ_MODULES" "$APPBROWSER/"
+  fi
 fi
-
 
 # clean up
 #rm -r $SRC
