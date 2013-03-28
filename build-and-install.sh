@@ -9,7 +9,7 @@ EXT_MODULES="open-vm-tools-modules-$(uname -r)"  # extension name for the vmware
 TCZ_MODULES="$EXT_MODULES.tcz"
 INSTDIR="/tmp/open-vm-tools-inst"
 INSTDIR_MODULES="/tmp/$EXT_MODULES"
-ADDITIONAL="additional-files.tar"  
+ADDITIONAL="additional-files"  
    
 ##
 ## process command line parameters
@@ -32,16 +32,6 @@ do
     esac
 done
 
-   
-##
-##  Check existance of used program
-##
-TAR=`which tar`
-if [ $? != 0 ]; then
-  echo "Can't find tar. Please install it with 'tce-load -iw rsync'. exit(5)"
-  exit 5
-fi
-   
    
 ##
 ##  Test for directories and old files from last run
@@ -88,8 +78,8 @@ export LDFLAGS="-Wl,-O1"
 
 ./configure --with-x --without-pam --without-gtkmm --without-procps --without-dnet --without-icu 
 make
-sudo mkdir $INSTDIR
-sudo make DESTDIR=$INSTDIR install-strip
+mkdir $INSTDIR
+make DESTDIR=$INSTDIR install
 cd ..
 
 
@@ -125,9 +115,10 @@ rm -r $INSTDIR/etc
 
 rm -r $INSTDIR/sbin
 
-# add custom init script
+# add additional tinycore specific file to installation directory
 #rsync -rlpv --executability "$ADDITIONAL/" $INSTDIR/usr/local
-tar -xf $ADDITIONAL -C $INSTDIR/usr/local
+#tar -xf $ADDITIONAL -C $INSTDIR/usr/local
+cp -ra $ADDITIONAL $INSTDIR/usr/local
 
 #cp $INIT $INSTDIR/usr/local/etc/init.d/open-vm-tools
 chmod +x $INSTDIR/usr/local/etc/init.d/open-vm-tools

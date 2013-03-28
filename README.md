@@ -5,11 +5,21 @@ Tools to build open-vm-tools for TinyCoreLinux 4.x
 
 The fast track building instructions
 ------------------------------------
-1. Clone the git repository into a tinycore bootet machine
-2. Download open-vm-tools tarball into the same directory
-3. Change user to root. ```sudo -s```
-4. Start build script ```./build-and-install.sh```
-5. Good luck / take some time
+1. Clone the git repository into a tinycore bootet machine and change into the directory 
+```sh
+git clone git://github.com/lapawa/tc4-open-vm-tools.git
+cd tc4-open-vm-tools
+```
+2. Download pen-vm-tools-9.2.2-893683.tar.gz tarball from open-vm-tools.sf.net
+3. Change user to root.
+```sh
+sudo -s
+```
+4. Start build script
+```sh
+./build-and-install.sh
+```
+5. Good luck
 6. The build script will spit out two tinycore extensions:
    open-vm-tools.tcz
    and
