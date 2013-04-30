@@ -35,7 +35,7 @@ Tested with these versions
 
 - TinyCore      : v4.7.5 i686
   http://www.tinycorelinux.com
-- open-vm-tools : 9.2.2-893683
+- open-vm-tools : 9.2.3-1031360.
   http://open-vm-tools.sf.net
 - linux kernel  : 3.0.21-tinycore
   The build script is kernel version independent and uses `uname -r` 
