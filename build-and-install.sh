@@ -3,13 +3,14 @@
 #
 # configure file locations
 #
-SRC="open-vm-tools-9.2.2-893683"
+SRC="open-vm-tools-9.2.3-1031360"
 TCZ="open-vm-tools.tcz"
 EXT_MODULES="open-vm-tools-modules-$(uname -r)"  # extension name for the vmware tools kernel modules
 TCZ_MODULES="$EXT_MODULES.tcz"
 INSTDIR="/tmp/open-vm-tools-inst"
 INSTDIR_MODULES="/tmp/$EXT_MODULES"
 ADDITIONAL="additional-files"  
+REMASTER=`which remaster.sh`
    
 ##
 ## process command line parameters
@@ -46,9 +47,10 @@ do
   fi
 done
 
+# check for already existing files and ask for -f option.
 for T in "$TCZ" "$TCZ_MODULES" "$INSTDIR" "$INSTDIR_MODULES" ; do
   if [ -e $T ]; then
-    echo -n "Found '$T' from old run. => "
+    echo -n "Found '$T' from previous run. => "
     if [ $FORCE ]; then
       echo "rm -r '$T'"
       rm -r "$T"
@@ -147,17 +149,23 @@ cd "$WD"
 ##
 ## copy extension to persistance datastore if exists
 ##
-if [ -r /opt/.appbrowser ]; then
-  APPBROWSER=`cat /opt/.appbrowser`
-  if [ -d "$APPBROWSER" ]; then
+if [ -d /etc/sysconfig/tcedir/optional/ ]; then
     cp "$TCZ" "$APPBROWSER/"
     cp "$TCZ_MODULES" "$APPBROWSER/"
-  fi
 fi
 
 # clean up
-#rm -r $SRC
-#rm -r $INSTDIR
-#rm -r $INSTDIR_MODULES
+echo 'Cleaning up temporary files...'
+rm -r $SRC
+rm -r $INSTDIR
+rm -r $INSTDIR_MODULES
+
+
+# build iso image 
+if [ -r ezremaster.cfg -a -x "$REMASTER" ]; then
+	echo 'Creating iso image...'
+	$REMASTER `pwd`/ezremaster.cfg rebuild
+	mv /tmp/ezremaster/ezremaster.iso `pwd`/tcl4-vmw-9-3-2.iso
+fi
 
 
