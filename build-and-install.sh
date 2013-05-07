@@ -165,7 +165,7 @@ rm -r $INSTDIR_MODULES
 if [ -r ezremaster.cfg -a -x "$REMASTER" ]; then
 	echo 'Creating iso image...'
 	$REMASTER `pwd`/ezremaster.cfg rebuild
-	mv /tmp/ezremaster/ezremaster.iso `pwd`/tcl4-vmw-9-3-2.iso
+	mv /tmp/ezremaster/ezremaster.iso `pwd`/tcl4-vmw-9-2-3.iso
 fi
 
 
