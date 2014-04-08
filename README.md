@@ -5,30 +5,39 @@ Tools to build open-vm-tools for TinyCoreLinux 5.2
 
 The fast track building instructions
 ------------------------------------
-1. Boot a system with tcl5.2
-2. Install build depencies mentions below from tcl repository
+1. Boot a system with tcl5.2 and least 512MB of RAM.
+1. Install tce package for git
 ```
-    tce-load -iw git <build-deps>
+    tce-load -iw git
 ```
-3. Clone the git repository into a tinycore bootet machine and change into the directory 
+1. Clone git repository with building instructions and tools
 ```
-    git clone git://github.com/lapawa/tc5-open-vm-tools.git &&
+    git clone https://github.com/lapawa/tc5-open-vm-tools.git &&
     cd tc5-open-vm-tools
 ```
-2. Download source tarball from http://sourceforge.net/projects/open-vm-tools/files/open-vm-tools/stable-9.4.x/
-    wget <some really ugly souceforge direct link> 
-3. Change user to root.
+1. Prepare the tiny core machine for building the tools
+```
+   ./prepare-tcl-to-build.sh
+```
+This script will install additional tce packages and get the open-vm-tools tarball from sourceforge.net.
+1. Change user to root.
 ```
     sudo -s
 ```
-4. Start build script
+1. Start build script
     ./build-and-install.sh
-5. Good luck
-6. The build script will spit out two tinycore extensions:
+1. Good luck
+1. The build script will spit out two tinycore extensions:
    open-vm-tools.tcz
    and
    open-vm-tools-modules-KERNEL.tcz
   
+
+Putting it al in one line
+---------------------------
+```
+    tce-load -iw git && git clone https://github.com/lapawa/tc5-open-vm-tools.git && cd tc5-open-vm-tools && ./prepare-tcl-to-build.sh && sudo ./build-and-install.sh
+```
 
 Tested with these versions
 -------------------------
@@ -63,10 +72,12 @@ Instructions used to configure
 ------------------------------
 
 Set these environment variables before starting configure script:
- * export RPCGENFLAGS="-Y /usr/local/bin"
- * export CFLAGS="-march=i486 -mtune=i686 -Os -pipe -Wno-error=deprecated-declarations -I/usr/local/include/tirpci -DHAVE_TIRPC"
- * export CXXFLAGS="-march=i486 -mtune=i686 -Os -pipe"
- * export LDFLAGS="-Wl,-O1 -ltirpc"
+```
+    export RPCGENFLAGS="-Y /usr/local/bin"
+    export CFLAGS="-march=i486 -mtune=i686 -Os -pipe -Wno-error=deprecated-declarations -I/usr/local/include/tirpci -DHAVE_TIRPC"
+    export CXXFLAGS="-march=i486 -mtune=i686 -Os -pipe"
+    export LDFLAGS="-Wl,-O1 -ltirpc"
+```
   
 Additional configure options:
  * --with-x 
