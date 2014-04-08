@@ -1,0 +1,63 @@
+diff -rupN open-vm-tools-9.4.0-1280544/configure.ac open-vm-tools-9.4.0-1280544-patched/configure.ac
+--- open-vm-tools-9.4.0-1280544/configure.ac	2013-09-23 15:51:10.000000000 +0000
++++ open-vm-tools-9.4.0-1280544-patched/configure.ac	2014-04-08 14:25:04.403509325 +0000
+@@ -942,7 +942,7 @@ if test "$os" = "linux"; then
+ 
+    LIBVMTOOLS_LIBADD="$LIBVMTOOLS_LIBADD -lrt"
+ 
+-   MODULES="$MODULES vmsync vmci vsock"
++   MODULES="$MODULES vmci vsock"
+    MODULES="$MODULES vmxnet vmblock vmhgfs"
+    buildHgfsmounter=yes
+ fi
+diff -rupN open-vm-tools-9.4.0-1280544/lib/dynxdr/dynxdr.c open-vm-tools-9.4.0-1280544-patched/lib/dynxdr/dynxdr.c
+--- open-vm-tools-9.4.0-1280544/lib/dynxdr/dynxdr.c	2013-09-23 15:51:10.000000000 +0000
++++ open-vm-tools-9.4.0-1280544-patched/lib/dynxdr/dynxdr.c	2014-04-08 14:23:43.436880845 +0000
+@@ -54,7 +54,7 @@ typedef struct DynXdrData {
+  * Mac OS X, FreeBSD and Solaris don't take a const parameter to the
+  * "x_getpostn" function.
+  */
+-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(sun)
++#if defined(HAVE_TIRPC) || defined(__APPLE__) || defined(__FreeBSD__) || defined(sun)
+ #  define DYNXDR_GETPOS_CONST
+ #else
+ #  define DYNXDR_GETPOS_CONST const
+@@ -171,7 +171,7 @@ DynXdrSetPos(XDR *xdrs, // IN
+ }
+ 
+ 
+-#if defined(__GLIBC__) || (defined(sun) && (defined(_LP64) || defined(_KERNEL)))
++#if !defined(HAVE_TIRPC) && (defined(__GLIBC__) || (defined(sun) && (defined(_LP64) || defined(_KERNEL))))
+ /*
+  *-----------------------------------------------------------------------------
+  *
+@@ -321,7 +321,7 @@ DynXdr_Create(XDR *in)  // IN
+       DynXdrSetPos,     /* x_setpostn */
+       DynXdrInline,     /* x_inline */
+       NULL,             /* x_destroy */
+-#if defined(__GLIBC__)
++#if !defined(HAVE_TIRPC) && defined(__GLIBC__)
+       NULL,             /* x_getint32 */
+       DynXdrPutInt32,   /* x_putint32 */
+ #elif defined(__APPLE__)
+@@ -330,6 +330,8 @@ DynXdr_Create(XDR *in)  // IN
+       NULL,             /* x_control */
+       NULL,             /* x_getint32 */
+       DynXdrPutInt32,   /* x_putint32 */
++#elif defined(HAVE_TIRPC)
++      NULL              /* x_control */
+ #endif
+    };
+ 
+diff -rupN open-vm-tools-9.4.0-1280544/lib/include/vmxrpc.h open-vm-tools-9.4.0-1280544-patched/lib/include/vmxrpc.h
+--- open-vm-tools-9.4.0-1280544/lib/include/vmxrpc.h	2013-09-23 15:51:10.000000000 +0000
++++ open-vm-tools-9.4.0-1280544-patched/lib/include/vmxrpc.h	2014-04-08 14:07:34.250212542 +0000
+@@ -35,7 +35,7 @@
+  * slightly different names than all other platforms. Provide macros to
+  * translate the names to the more common ones.
+  */
+-#if defined(__GLIBC__) || defined(sun)
++#if !defined(HAVE_TIRPC) && (defined(__GLIBC__) || defined(sun))
+ #  define xdr_u_int16_t(x, i)    xdr_uint16_t(x, i)
+ #  define xdr_u_int32_t(x, i)    xdr_uint32_t(x, i)
+ #  define xdr_u_int64_t(x, i)    xdr_uint64_t(x, i)

@@ -1,2 +1,5 @@
-open-vm-tools*
+open-vm-tools-?.?.?-???????
+open-vm-tools-*.tar.gz
+open-vm-tools-*-patched
+*.tcz*
 *.iso

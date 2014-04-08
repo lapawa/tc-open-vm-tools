@@ -3,7 +3,7 @@
 #
 # configure file locations
 #
-SRC="open-vm-tools-9.2.3-1031360"
+SRC="open-vm-tools-9.4.0-1280544"
 TCZ="open-vm-tools.tcz"
 EXT_MODULES="open-vm-tools-modules-$(uname -r)"  # extension name for the vmware tools kernel modules
 TCZ_MODULES="$EXT_MODULES.tcz"
@@ -69,16 +69,18 @@ set -e
 
 # extract source archive
 tar xfz $SRC.tar.gz
+patch -p0 < $SRC.patch
+
 cd $SRC
 
 
 # configure, make, make install
 export RPCGENFLAGS="-Y /usr/local/bin"
-export CFLAGS="-march=i486 -mtune=i686 -Os -pipe -Wno-error=deprecated-declarations"
+export CFLAGS="-march=i486 -mtune=i686 -Os -pipe -Wno-error=deprecated-declarations -DHAVE_TIRPC -I/usr/local/include/tirpc"
 export CXXFLAGS="-march=i486 -mtune=i686 -Os -pipe"
-export LDFLAGS="-Wl,-O1"
+export LDFLAGS="-Wl,-O1 -L/usr/local/lib -ltirpc"
 
-./configure --with-x --without-pam --without-gtkmm --without-procps --without-dnet --without-icu 
+./configure --with-x --without-pam --without-gtkmm --without-procps --without-dnet --without-icu
 make
 mkdir $INSTDIR
 make DESTDIR=$INSTDIR install-strip
@@ -167,5 +169,4 @@ if [ -r ezremaster.cfg -a -x "$REMASTER" ]; then
 	$REMASTER `pwd`/ezremaster.cfg rebuild
 	mv /tmp/ezremaster/ezremaster.iso `pwd`/tcl4-vmw-9-2-3.iso
 fi
-
 
