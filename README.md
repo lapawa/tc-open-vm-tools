@@ -1,19 +1,19 @@
-tc4-open-vm-tools
+tc5-open-vm-tools
 =================
 
-Tools to build open-vm-tools for TinyCoreLinux 4.x
+Tools to build open-vm-tools for TinyCoreLinux 5.2
 
 The fast track building instructions
 ------------------------------------
-1. Boot a system with tcl4
+1. Boot a system with tcl5.2
 2. Install build depencies mentions below from tcl repository
 ```
     tce-load -iw git <build-deps>
 ```
 3. Clone the git repository into a tinycore bootet machine and change into the directory 
 ```
-    git clone git://github.com/lapawa/tc4-open-vm-tools.git &&
-    cd tc4-open-vm-tools
+    git clone git://github.com/lapawa/tc5-open-vm-tools.git &&
+    cd tc5-open-vm-tools
 ```
 2. Download source tarball from http://sourceforge.net/projects/open-vm-tools/files/open-vm-tools/stable-9.4.x/
     wget <some really ugly souceforge direct link> 
@@ -45,7 +45,7 @@ Tested with these versions
 Build dependencies
 ------------------
 
- - git                # To clone repository from github.com/lapawa/tc4-open-vm-tools
+ - git                # To clone repository from github.com/lapawa/tc5-open-vm-tools
  - compiletc          # this meta package pulls in a lot of necessary development tools
  - linux-kernel-source-env # Installs the shell script /usr/local/bin/linux-kernel-sources-env.sh which will prepare kernel sources/headers
  - glibc_apps         # /usr/bin/rpcgen is in this packet
