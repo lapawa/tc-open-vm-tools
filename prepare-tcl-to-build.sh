@@ -2,7 +2,7 @@
 
 set -e
 
-source open-vm-tools_version.sh
+TOOLS_VERSION=$(<open-vm-tools.version)
 
 echo "### Preparing this tiny core machine to build the open-vm-tools version $TOOLS_VERIONS"
 
