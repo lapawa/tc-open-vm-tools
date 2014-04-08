@@ -1,0 +1,10 @@
+compiletc
+glibc_apps
+squashfs-tools-4.x
+glib2-dev
+libtirpc-dev
+Xorg-7.7-dev
+gtk2-dev
+libGL-dev
+gtkmm-dev
+fuse
