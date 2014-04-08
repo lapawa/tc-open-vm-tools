@@ -56,7 +56,7 @@ Build dependencies
 
  - git                # To clone repository from github.com/lapawa/tc5-open-vm-tools
  - compiletc          # this meta package pulls in a lot of necessary development tools
- - linux-kernel-source-env # Installs the shell script /usr/local/bin/linux-kernel-sources-env.sh which will prepare kernel sources/headers
+ - linux-kernel-sources-env # Installs the shell script /usr/local/bin/linux-kernel-sources-env.sh which will prepare kernel sources/headers
  - glibc_apps         # /usr/bin/rpcgen is in this packet
  - squashfs-tools-4.x # Tools to build the .tcz file
  - glib2-dev          # 

@@ -1,4 +1,5 @@
 compiletc
+linux-kernel-sources-env
 glibc_apps
 squashfs-tools-4.x
 glib2-dev
@@ -8,3 +9,4 @@ gtk2-dev
 libGL-dev
 gtkmm-dev
 fuse
+ezremaster

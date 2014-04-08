@@ -165,6 +165,12 @@ rm -r $INSTDIR_MODULES
 
 # build iso image 
 if [ -r ezremaster.cfg -a -x "$REMASTER" ]; then
+        grep sr0 /etc/mtab > /dev/null
+        if [ $? -ne 0 ];
+        then
+		mount /mnt/sr0
+        fi
+
 	echo 'Creating iso image...'
 	$REMASTER `pwd`/ezremaster.cfg rebuild
 	mv /tmp/ezremaster/ezremaster.iso `pwd`/tcl4-vmw-9-2-3.iso
