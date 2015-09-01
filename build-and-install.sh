@@ -1,16 +1,41 @@
 #!/bin/sh
 
 #
-# configure file locations
+# set some environment variables
 #
-SRC="open-vm-tools-9.4.0-1280544"
+
+# version number of vmware tools and source package
+read -r <open-vm-tools.version TOOLS_VERSION
+SRC="open-vm-tools-${TOOLS_VERSION}"
+TCL_VERSION=`/usr/bin/version`
+
+# output
 TCZ="open-vm-tools.tcz"
 EXT_MODULES="open-vm-tools-modules-$(uname -r)"  # extension name for the vmware tools kernel modules
-TCZ_MODULES="$EXT_MODULES.tcz"
+TCZ_MODULES="${EXT_MODULES}.tcz"
+
+# List of packages created by this script
+BUILD_PKGS="${TCZ} ${TCZ_MODULES}"
+# List of filename extensions belonging to a tinycorelinux package
+PKG_EXTS=".dep .list .md5.txt"
+
+# ISO image created by this script
+ISOIMAGE="${PWD}/tcl${TCL_VERSION}-vmw-${TOOLS_VERSION}.iso"
+
+# temporary files
 INSTDIR="/tmp/open-vm-tools-inst"
 INSTDIR_MODULES="/tmp/$EXT_MODULES"
+
+# directory with overlay files added to the package
 ADDITIONAL="additional-files"  
+# location of remastering script
 REMASTER=`which remaster.sh`
+APPBROWSER='/etc/sysconfig/tcedir/optional'
+CONFIGFLAGS="--with-x --without-xerces --disable-deploypkg --without-pam --without-gtkmm --without-procps --without-icu"
+NUMCPUS=`cat /proc/cpuinfo|grep processor|wc | cut -b 9`
+MAKEFLAGS="-j$(( ${NUMCPUS} +1 ))"
+
+KEEP=0
    
 ##
 ## process command line parameters
@@ -30,12 +55,16 @@ do
       echo "Option $i set. Overwrite of existing files enforced."
       FORCE=1
       shift;;
-    esac
+    -k)
+      echo "Option $i set. Keeping temporary files."
+      KEEP=1
+      shift;;
+  esac
 done
 
    
 ##
-##  Test for directories and old files from last run
+##  Test for directories and files from previous runs
 ##
 
 # test existance of open-vm-tools tarball
@@ -69,7 +98,10 @@ set -e
 
 # extract source archive
 tar xfz $SRC.tar.gz
-patch -p0 < $SRC.patch
+if [ -r "${SRC}.patch" ]; then
+  echo "### apply patch $SRC.patch"
+  patch -p0 < $SRC.patch
+fi
 
 cd $SRC
 
@@ -80,10 +112,13 @@ export CFLAGS="-march=i486 -mtune=i686 -Os -pipe -Wno-error=deprecated-declarati
 export CXXFLAGS="-march=i486 -mtune=i686 -Os -pipe"
 export LDFLAGS="-Wl,-O1 -L/usr/local/lib -ltirpc"
 
-./configure --with-x --without-pam --without-gtkmm --without-procps --without-dnet --without-icu
-make
-mkdir $INSTDIR
-make DESTDIR=$INSTDIR install-strip
+echo "## configure $CONFIGFLAGS"
+/bin/sh configure $CONFIGFLAGS
+echo "## make $MAKEFLAGS"
+make $MAKEFLAGS
+
+mkdir "${INSTDIR}"
+make DESTDIR=${INSTDIR} install-strip
 cd ..
 
 
@@ -147,20 +182,33 @@ cd "$INSDIR_MODULES"
 find usr -not -type d > "$WD/$TCZ_MODULES.list"
 cd "$WD"
 
+# create dummy dependencies file for kernel modules
+touch "${TCZ_MODULES}.dep"
 
 ##
 ## copy extension to persistance datastore if exists
 ##
-if [ -d /etc/sysconfig/tcedir/optional/ ]; then
-    cp "$TCZ" "$APPBROWSER/"
-    cp "$TCZ_MODULES" "$APPBROWSER/"
+if [ -d "$APPBROWSER" ]; then
+    for PKG in $BUILD_PKGS; do
+      cp "$PKG" "${APPBROWSER}/"
+      for EXT in $PKG_EXTS; do
+          cp "${PKG}${EXT}" "${APPBROWSER}/"
+      done
+    done
 fi
 
 # clean up
-echo 'Cleaning up temporary files...'
-rm -r $SRC
-rm -r $INSTDIR
-rm -r $INSTDIR_MODULES
+if [ -n "$KEEP" ]
+then
+  echo -n 'Cleaning up temporary files...'
+  rm -r $SRC
+  rm -r $INSTDIR
+  rm -r $INSTDIR_MODULES
+  echo 'done'
+  
+else
+  echo 'Skipping deletion of temporary files.'
+fi
 
 
 # build iso image 
@@ -173,6 +221,9 @@ if [ -r ezremaster.cfg -a -x "$REMASTER" ]; then
 
 	echo 'Creating iso image...'
 	$REMASTER `pwd`/ezremaster.cfg rebuild
-	mv /tmp/ezremaster/ezremaster.iso `pwd`/tcl4-vmw-9-2-3.iso
+	mv /tmp/ezremaster/ezremaster.iso "${ISOIMAGE}"
+else
+	echo "Skipping iso image creation due to missing config file 'ezremaster.cfg'"
+
 fi
 

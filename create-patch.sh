@@ -1,5 +1,6 @@
 #!/bin/ash
-SRC=open-vm-tools-9.4.0-1280544
+read -r <open-vm-tools.version TOOLS_VERSION
+SRC="open-vm-tools-${TOOLS_VERSION}"
 
 rm -rf $SRC
 tar xfz $SRC.tar.gz

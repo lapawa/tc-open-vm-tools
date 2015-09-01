@@ -1,12 +1,13 @@
 compiletc
 linux-kernel-sources-env
 glibc_apps
-squashfs-tools-4.x
+squashfs-tools
 glib2-dev
 libtirpc-dev
 Xorg-7.7-dev
 gtk2-dev
 libGL-dev
 gtkmm-dev
+openssl-dev
 fuse
 ezremaster

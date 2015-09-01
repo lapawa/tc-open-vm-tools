@@ -1,11 +1,11 @@
-tc5-open-vm-tools
+tcl-open-vm-tools
 =================
 
-Tools to build open-vm-tools for TinyCoreLinux 5.2
+Tools to build open-vm-tools for TinyCoreLinux 6.3
 
 The fast track building instructions
 ------------------------------------
-1. Boot a system with tcl5.2 and least 512MB of RAM.
+1. Boot a system with tcl6.3 and least 1GB of RAM.
 1. Install tce package for git
 ```
     tce-load -iw git
