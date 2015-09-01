@@ -34,6 +34,7 @@ APPBROWSER='/etc/sysconfig/tcedir/optional'
 CONFIGFLAGS="--with-x --without-xerces --disable-deploypkg --without-pam --without-gtkmm --without-procps --without-icu"
 NUMCPUS=`cat /proc/cpuinfo|grep processor|wc | cut -b 9`
 MAKEFLAGS="-j$(( ${NUMCPUS} +1 ))"
+MAKEFLAGS=""
 
 KEEP=0
    
